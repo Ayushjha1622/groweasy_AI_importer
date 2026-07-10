@@ -39,11 +39,18 @@ export default function MappingPage() {
         mappings={data?.mappings ?? []}
       />
 
-      <AcceptMappingButton
-        onClick={() =>
-          router.push("/processing")
-        }
-      />
+     <AcceptMappingButton
+  onClick={() => {
+    console.log("Before:", window.location.pathname);
+
+    router.push("/processing");
+
+    setTimeout(() => {
+      console.log("After:", window.location.pathname);
+    }, 100);
+  }}
+/>
+
 
     </div>
   );

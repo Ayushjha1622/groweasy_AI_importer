@@ -1,38 +1,33 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 
-import { importSchema } from "../validators/import.schema";
-
-import { importService } from "../services/import.service";
+import { asyncHandler } from "../utils/asyncHandler";
 
 import { successResponse } from "../utils/apiResponse";
 
-export async function importController(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+import { importService } from "../services/import.service";
 
-    try {
+export const processImport =
+    asyncHandler(
 
-        const { fileId } =
-            importSchema.parse(req.body);
+        async (
+            req: Request,
+            res: Response
+        ) => {
 
-        const result =
-            await importService.importCSV(fileId);
+            const { fileId } = req.body;
 
-        return res.json(
+            const result =
+                await importService.process(
+                    fileId
+                );
 
-            successResponse(
-                result,
-                "Import completed successfully."
-            )
+           res.status(200).json(
+    successResponse(
+        result,
+        "Import completed."
+    )
+);
 
-        );
+        }
 
-    } catch (error) {
-
-        next(error);
-
-    }
-
-}
+    );

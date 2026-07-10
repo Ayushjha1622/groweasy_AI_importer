@@ -11,14 +11,12 @@ export default function AcceptMappingButton({
 }: Props) {
   return (
     <div className="mt-8 flex justify-end">
-
       <Button
         size="lg"
         onClick={onClick}
       >
         Accept Mapping
       </Button>
-
     </div>
   );
 }

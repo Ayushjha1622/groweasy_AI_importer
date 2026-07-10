@@ -1,16 +1,15 @@
 import fs from "fs";
 import path from "path";
-import pLimit from "p-limit";
-
-import { AppError } from "../utils/AppError";
-
 import { parseCSV } from "./csv/csvParser.service";
-import { createBatches } from "./ai/batchProcessor";
+import { mapRow } from "./mapping/ruleMapper";
+import { needsAI } from "./mapping/needAI";
+
 import { mistralService } from "./ai/mistral.service";
+import { createBatches } from "./ai/batchProcessor";
 
 class ImportService {
 
-    async importCSV(fileId: string) {
+    async process(fileId: string) {
 
         const filePath = path.join(
             process.cwd(),
@@ -20,86 +19,86 @@ class ImportService {
         );
 
         if (!fs.existsSync(filePath)) {
-            throw new AppError("Uploaded file not found.", 404);
+            throw new Error("Uploaded file not found.");
         }
 
         const rows = await parseCSV(filePath);
 
-        const batches = createBatches(rows, 50);
+        const batches = createBatches(rows, 100);
 
-        const importedRecords: any[] = [];
-        const skippedRecords: any[] = [];
+        const imported: any[] = [];
+        const skipped: any[] = [];
 
-        const limit = pLimit(5);
+        for (const batch of batches) {
 
-        console.log(`Processing ${batches.length} batches...`);
+            const aiCandidates: any[] = [];
 
-        const batchResults = await Promise.allSettled(
+            const mappedRecords = batch.map(row => {
 
-            batches.map((batch, index) =>
-                limit(async () => {
+                const crm = mapRow(row);
 
-                    console.log(
-                        `Processing batch ${index + 1}/${batches.length}`
+                if (needsAI(crm)) {
+                    aiCandidates.push(crm);
+                }
+
+                return crm;
+
+            });
+
+            let aiRecords: any[] = [];
+
+            if (aiCandidates.length > 0) {
+
+                console.log(
+                    `Sending ${aiCandidates.length} rows to AI`
+                );
+
+                aiRecords =
+                    await mistralService.extract(
+                        aiCandidates
                     );
 
-                    return mistralService.extract(batch);
+            }
 
-                })
-            )
+            let aiIndex = 0;
 
-        );
+            mappedRecords.forEach(record => {
 
-        for (const batchResult of batchResults) {
+                if (needsAI(record)) {
 
-    if (batchResult.status === "rejected") {
+                    imported.push(
+                        aiRecords[aiIndex++]
+                    );
 
-        console.error("Batch failed:", batchResult.reason);
+                } else {
 
-        continue;
-    }
+                    imported.push(record);
 
-    // CRMRecord[]
-    const extracted = batchResult.value;
+                }
 
-    const validRecords = extracted.filter(record =>
+            });
 
-        (record.email?.trim() ?? "") !== "" ||
+        }
 
-        (record.mobile_without_country_code?.trim() ?? "") !== ""
+       return {
+    total: rows.length,
+    imported: imported.length,
+    skipped: skipped.length,
 
-    );
+    successRate:
+        rows.length === 0
+            ? 0
+            : Math.round(
+                (imported.length / rows.length) * 100
+            ),
 
-    const invalidRecords = extracted.filter(record =>
-
-        (record.email?.trim() ?? "") === "" &&
-
-        (record.mobile_without_country_code?.trim() ?? "") === ""
-
-    );
-
-    importedRecords.push(...validRecords);
-
-    skippedRecords.push(...invalidRecords);
-
-}
-
-        return {
-
-            totalRows: rows.length,
-
-            totalImported: importedRecords.length,
-
-            totalSkipped: skippedRecords.length,
-
-            importedRecords,
-
-            skippedRecords
-
-        };
+    importedRecords: imported,
+    skippedRecords: skipped,
+};
 
     }
 
 }
 
-export const importService = new ImportService();
+export const importService =
+    new ImportService();
