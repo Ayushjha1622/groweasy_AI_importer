@@ -20,7 +20,7 @@ export default function HistoryTable({
 
             <table className="w-full">
 
-                <thead className="bg-muted">
+                <thead className="sticky top-0 bg-background">
 
                     <tr>
 
@@ -58,7 +58,7 @@ export default function HistoryTable({
 
                         <tr
                             key={row.id}
-                            className="hover:bg-muted/50"
+                            className="transition-colors hover:bg-muted/40"
                         >
 
                             <td className="px-4 py-3">
@@ -73,22 +73,30 @@ export default function HistoryTable({
 
                             </td>
 
-                            <td className="px-4 py-3 text-green-600">
-
-                                {row.imported}
-
-                            </td>
-
-                            <td className="px-4 py-3 text-red-600">
-
-                                {row.skipped}
-
+                            <td className="px-4 py-3">
+                                <span className="font-semibold text-green-600">
+                                    {row.imported}
+                                </span>
                             </td>
 
                             <td className="px-4 py-3">
+                                <span className="font-semibold text-red-600">
+                                    {row.skipped}
+                                </span>
+                            </td>
 
-                                {row.successRate}%
-
+                            <td className="px-4 py-3">
+                                <span
+                                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                                        row.successRate === 100
+                                            ? "bg-green-100 text-green-700"
+                                            : row.successRate >= 70
+                                            ? "bg-yellow-100 text-yellow-700"
+                                            : "bg-red-100 text-red-700"
+                                    }`}
+                                >
+                                    {row.successRate}%
+                                </span>
                             </td>
 
                             <td className="px-4 py-3">
