@@ -32,7 +32,7 @@ export default function DropZone({
   return (
     <div
       {...getRootProps()}
-      className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-16 transition-colors ${
+      className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 sm:p-12 md:p-16 transition-colors ${
         isDragActive
           ? "border-primary bg-primary/5"
           : "border-border hover:border-primary/50"

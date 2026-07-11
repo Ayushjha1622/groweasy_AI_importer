@@ -17,18 +17,18 @@ export default function MappingRow({
   return (
     <tr className="border-b">
 
-      <td className="p-4 font-medium">
+      <td className="p-4 font-medium whitespace-nowrap">
         {mapping.csvColumn}
       </td>
 
-      <td className="p-4">
+      <td className="p-4 whitespace-nowrap">
         <FieldSelect
           value={mapping.mappedField}
           onChange={onChange}
         />
       </td>
 
-      <td className="p-4">
+      <td className="p-4 whitespace-nowrap">
         <ConfidenceBadge
           confidence={mapping.confidence}
         />

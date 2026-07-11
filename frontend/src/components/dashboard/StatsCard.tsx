@@ -30,7 +30,7 @@ export default function StatsCard({
 
                     {title === "Average Success" ? (
                         <div className="mt-3">
-                            <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-700">
+                            <span className="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/40 px-3 py-1 text-sm font-semibold text-green-700 dark:text-green-400">
                                 🟢 {value} Excellent
                             </span>
                         </div>

@@ -14,6 +14,7 @@ import {
     downloadCSV,
     downloadJSON,
 } from "@/lib/export";
+import { generatePDFReport } from "@/lib/pdfExport";
 
 export default function ResultsActions() {
     const result = useImportStore((state) => state.result);
@@ -72,6 +73,19 @@ export default function ResultsActions() {
             >
                 <FileJson className="mr-2 h-4 w-4" />
                 Export JSON
+            </Button>
+
+            <Button
+                variant="outline"
+                className="hover:bg-neutral-100"
+                onClick={() => {
+                    if (confirm("Generate PDF Report?")) {
+                        generatePDFReport(result, "report.pdf");
+                    }
+                }}
+            >
+                <Download className="mr-2 h-4 w-4" />
+                Export PDF
             </Button>
 
             <Button

@@ -48,12 +48,18 @@ export default function UploadCard() {
     } catch (error) {
       console.error(error);
 
-      toast.error("Upload failed.");
+      const errorMsg = (error as any)?.response?.data?.message || (error as any)?.message || "";
+      
+      if (errorMsg.toLowerCase().includes("network") || (error as any)?.code === "ERR_NETWORK") {
+        toast.error("Network disconnected. Please check your connection and try again.");
+      } else {
+        toast.error("CSV parsing failed. Please upload a valid CSV file.");
+      }
     }
   };
 
   return (
-    <Card className="mx-auto mt-10 max-w-4xl p-8">
+    <Card className="mx-auto mt-4 sm:mt-10 max-w-4xl p-4 sm:p-6 md:p-8">
 
       <div className="mb-8 text-center">
 

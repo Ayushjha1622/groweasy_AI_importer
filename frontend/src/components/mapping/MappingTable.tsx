@@ -31,7 +31,7 @@ export default function MappingTable({
   }
 
   return (
-    <div className="rounded-xl border">
+    <div className="rounded-xl border overflow-x-auto">
 
       <table className="w-full">
 
@@ -39,15 +39,15 @@ export default function MappingTable({
 
           <tr>
 
-            <th className="p-4 text-left">
+            <th className="p-4 text-left whitespace-nowrap">
               CSV Column
             </th>
 
-            <th className="p-4 text-left">
+            <th className="p-4 text-left whitespace-nowrap">
               CRM Field
             </th>
 
-            <th className="p-4 text-left">
+            <th className="p-4 text-left whitespace-nowrap">
               Confidence
             </th>
 

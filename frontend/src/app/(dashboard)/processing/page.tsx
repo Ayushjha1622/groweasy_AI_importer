@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 import { useUploadStore } from "@/store/upload.store";
 import { useImport } from "@/hooks/useImport";
@@ -23,6 +24,7 @@ export default function ProcessingPage() {
   const started = useRef(false);
 
   const [progress, setProgress] = useState(0);
+  const [isError, setIsError] = useState(false);
 
   const [logs, setLogs] = useState<string[]>(["Preparing import..."]);
 
@@ -74,8 +76,21 @@ useEffect(() => {
         }, 800);
     }).catch((error) => {
         clearInterval(progressInterval);
-        setLogs(prev => [...prev, "Error occurred during import."]);
+        const errorMsg = (error as any)?.response?.data?.message || (error as any)?.message || "";
+        
+        let specificError = "Error occurred during import.";
+        if (errorMsg.toLowerCase().includes("network") || (error as any)?.code === "ERR_NETWORK") {
+            specificError = "Network disconnected. Please check your connection.";
+        } else {
+            specificError = "AI service unavailable. Please try again later.";
+        }
+        
+        setLogs(prev => [...prev, specificError]);
         console.error("ERROR", error);
+        setIsError(true);
+        
+        // Let's also dispatch a toast for better visibility
+        toast.error(specificError);
     });
 
 }, [fileId, mutation, router, setResult]);
@@ -86,6 +101,18 @@ useEffect(() => {
       <ProgressCard value={progress} />
 
       <ProcessingLogs logs={logs} />
+      
+      {isError && (
+        <div className="flex justify-center mt-6">
+          <Button 
+            onClick={() => router.push("/upload")} 
+            variant="destructive"
+            size="lg"
+          >
+            Try Again
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

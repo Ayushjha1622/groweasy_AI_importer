@@ -14,62 +14,41 @@ export default function SkippedTable({
 }: Props) {
 
     if (rows.length === 0) {
-
         return (
-
-            <div className="rounded-xl border p-10 text-center">
-
-                <p className="text-green-600 font-medium">
+            <div className="rounded-xl border p-10 text-center bg-card">
+                <p className="text-emerald-600 dark:text-emerald-400 font-medium">
                     🎉 No skipped records.
                 </p>
-
             </div>
-
         );
-
     }
 
     return (
-
-        <div className="rounded-xl border">
-
+        <div className="rounded-xl border bg-card">
             <div className="border-b p-5">
-
                 <h2 className="text-xl font-semibold">
                     Skipped Records
                 </h2>
-
             </div>
 
-            <div className="space-y-3 p-5 overflow-x-auto">
-
+            <div className="space-y-4 p-5">
                 {rows.map((record, index) => (
-
                     <div
                         key={index}
-                        className="rounded-lg border p-4 min-w-[500px]"
+                        className="rounded-lg border p-4 bg-muted/20"
                     >
-
-                        <p className="font-medium text-red-600 whitespace-nowrap">
-
-                            {record.reason}
-
+                        <p className="font-semibold text-rose-600 dark:text-rose-400 break-words">
+                            Reason: {record.reason}
                         </p>
 
-                        <pre className="mt-3 overflow-auto rounded bg-muted p-3 text-sm">
-
-                            {JSON.stringify(record.row, null, 2)}
-
-                        </pre>
-
+                        <div className="mt-3 overflow-x-auto rounded-lg bg-muted p-3">
+                            <pre className="text-xs font-mono leading-relaxed text-muted-foreground whitespace-pre-wrap sm:whitespace-pre">
+                                {JSON.stringify(record.row, null, 2)}
+                            </pre>
+                        </div>
                     </div>
-
                 ))}
-
             </div>
-
         </div>
-
     );
-
 }
