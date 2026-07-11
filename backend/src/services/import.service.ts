@@ -1,14 +1,17 @@
 import fs from "fs";
 import path from "path";
+
 import { parseCSV } from "./csv/csvParser.service";
+
 import { mapRow } from "./mapping/ruleMapper";
 import { needsAI } from "./mapping/needAI";
 
 import { mistralService } from "./ai/mistral.service";
 import { createBatches } from "./ai/batchProcessor";
 
-class ImportService {
+import { historyService } from "./history.service";
 
+class ImportService {
     async process(fileId: string) {
 
         const filePath = path.join(
@@ -33,7 +36,7 @@ class ImportService {
 
             const aiCandidates: any[] = [];
 
-            const mappedRecords = batch.map(row => {
+            const mappedRecords = batch.map((row) => {
 
                 const crm = mapRow(row);
 
@@ -42,7 +45,6 @@ class ImportService {
                 }
 
                 return crm;
-
             });
 
             let aiRecords: any[] = [];
@@ -53,26 +55,34 @@ class ImportService {
                     `Sending ${aiCandidates.length} rows to AI`
                 );
 
-                aiRecords =
-                    await mistralService.extract(
-                        aiCandidates
-                    );
-
+                aiRecords = await mistralService.extract(
+                    aiCandidates
+                );
             }
 
             let aiIndex = 0;
 
-            mappedRecords.forEach(record => {
+            mappedRecords.forEach((record) => {
 
-                if (needsAI(record)) {
+                try {
 
-                    imported.push(
-                        aiRecords[aiIndex++]
-                    );
+                    if (needsAI(record)) {
+                        imported.push(
+                            aiRecords[aiIndex++]
+                        );
+                    } else {
+                        imported.push(record);
+                    }
 
-                } else {
+                } catch (error) {
 
-                    imported.push(record);
+                    skipped.push({
+                        row: record,
+                        reason:
+                            error instanceof Error
+                                ? error.message
+                                : "Unknown Error",
+                    });
 
                 }
 
@@ -80,25 +90,32 @@ class ImportService {
 
         }
 
-       return {
+        const successRate =
+            rows.length === 0
+                ? 0
+                : Math.round(
+                      (imported.length / rows.length) * 100
+                  );
+
+        console.log("Saving history...");
+historyService.save(
+    fileId,
+    rows.length,
+    imported.length,
+    skipped.length
+);
+
+const summary = {
     total: rows.length,
     imported: imported.length,
     skipped: skipped.length,
-
-    successRate:
-        rows.length === 0
-            ? 0
-            : Math.round(
-                (imported.length / rows.length) * 100
-            ),
-
+    successRate,
     importedRecords: imported,
     skippedRecords: skipped,
 };
 
+return summary;
     }
-
 }
 
-export const importService =
-    new ImportService();
+export const importService = new ImportService();

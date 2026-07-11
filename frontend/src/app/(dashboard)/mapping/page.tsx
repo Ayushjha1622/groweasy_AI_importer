@@ -42,6 +42,7 @@ export default function MappingPage() {
      <AcceptMappingButton
   onClick={() => {
     console.log("Before:", window.location.pathname);
+    console.log("Mapping fileId:", fileId);
 
     router.push("/processing");
 

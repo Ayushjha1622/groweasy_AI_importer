@@ -36,8 +36,11 @@ export default function UploadCard() {
 
     try {
       const response = await uploadMutation.mutateAsync(selectedFile);
+      console.log("Upload response:", response);
 
       setFileId(response.data.fileId);
+      console.log("Uploaded fileId:", response.data.fileId);
+      console.log("Stored fileId:", response.data.fileId);
 
       toast.success("CSV uploaded successfully!");
 

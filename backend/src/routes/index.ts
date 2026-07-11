@@ -5,6 +5,7 @@ import importRoutes from "./import.routes";
 import previewRoutes from "./preview.routes";
 import healthRoutes from "./health.routes";
 import mappingRoutes from "./mapping.routes";
+import historyRoutes from "./history.routes";
 
 
 const router = Router();
@@ -22,6 +23,11 @@ router.use("/mapping", mappingRoutes);
 router.use(
     "/import",
     importRoutes
+);
+
+router.use(
+    "/history",
+    historyRoutes
 );
 
 export default router;

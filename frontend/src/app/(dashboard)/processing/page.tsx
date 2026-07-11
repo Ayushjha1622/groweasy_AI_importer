@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import { useUploadStore } from "@/store/upload.store";
@@ -19,51 +19,64 @@ export default function ProcessingPage() {
 
   const mutation = useImport();
 
+  const started = useRef(false);
+
   const [progress, setProgress] = useState(0);
 
   const [logs, setLogs] = useState<string[]>(["Preparing import..."]);
 
-  useEffect(() => {
+
+
+useEffect(() => {
+
+    console.log("useEffect started");
+
     if (!fileId) {
-      router.replace("/upload");
-      return;
+        console.log("No fileId");
+        router.replace("/upload");
+        return;
     }
 
-    mutation.mutate(fileId, {
-onSuccess(data) {
+    if (started.current) {
+        console.log("Already started");
+        return;
+    }
 
-    console.log("Import response:", data);
+    started.current = true;
 
-    setResult(data);
+    console.log("Calling mutate...");
 
-    setProgress(100);
+    const progressInterval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 95) return 95;
+        const increment = Math.max(1, Math.floor((95 - prev) / 10));
+        return prev + increment;
+      });
+    }, 1000);
 
-    setLogs(prev => [
-        ...prev,
-        "Import completed."
+    setLogs([
+        "Preparing import...", 
+        "Sending data to AI for processing...", 
+        "Please wait, AI extraction can take up to a minute..."
     ]);
-
-    setTimeout(() => {
-        router.push("/results");
-    }, 1000)
-  },
-
-      onError() {
-        setLogs((prev) => [...prev, "Import failed."]);
-      },
+    
+    mutation.mutateAsync(fileId).then((data) => {
+        clearInterval(progressInterval);
+        setProgress(100);
+        setLogs(prev => [...prev, "Import completed successfully!"]);
+        
+        setTimeout(() => {
+            console.log("SUCCESS", data);
+            setResult(data);
+            router.push("/results");
+        }, 800);
+    }).catch((error) => {
+        clearInterval(progressInterval);
+        setLogs(prev => [...prev, "Error occurred during import."]);
+        console.error("ERROR", error);
     });
 
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 90) return prev;
-
-        return prev + 10;
-      });
-    }, 300);
-
-    return () => clearInterval(timer);
-  }, []);
-
+}, [fileId, mutation, router, setResult]);
   return (
     <div className="space-y-8">
       <ProcessingHeader />
