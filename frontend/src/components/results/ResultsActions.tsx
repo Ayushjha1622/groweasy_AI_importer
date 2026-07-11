@@ -1,82 +1,91 @@
 "use client";
 
-import { Download, Upload } from "lucide-react";
-import { useRouter } from "next/navigation";
+import {
+    Download,
+    FileJson,
+    FileSpreadsheet,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 import { useImportStore } from "@/store/import.store";
 
+import {
+    downloadCSV,
+    downloadJSON,
+} from "@/lib/export";
+
 export default function ResultsActions() {
+    const result = useImportStore((state) => state.result);
 
-    const router = useRouter();
-
-    const result = useImportStore(
-        state => state.result
-    );
-
-    function downloadReport() {
-
-        if (!result) return;
-
-        const blob = new Blob(
-
-            [
-                JSON.stringify(result, null, 2)
-            ],
-
-            {
-                type: "application/json"
-            }
-
-        );
-
-        const url =
-            URL.createObjectURL(blob);
-
-        const link =
-            document.createElement("a");
-
-        link.href = url;
-
-        link.download =
-            "import-report.json";
-
-        link.click();
-
-        URL.revokeObjectURL(url);
-
-    }
+    if (!result) return null;
 
     return (
-
-        <div className="flex justify-end gap-4">
+        <div className="flex flex-wrap gap-4">
 
             <Button
                 variant="outline"
-                onClick={() =>
-                    router.push("/upload")
-                }
+                className="hover:bg-neutral-100"
+                onClick={() => {
+                    if (confirm("Export imported records?")) {
+                        downloadCSV(
+                            "imported-records.csv",
+                            result.importedRecords
+                        );
+                    }
+                }}
             >
-
-                <Upload className="mr-2 h-4 w-4" />
-
-                Import Another File
-
+                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                Export CSV
             </Button>
 
             <Button
-                onClick={downloadReport}
+                variant="outline"
+                className="hover:bg-neutral-100"
+                onClick={() => {
+                    if (confirm("Export skipped records?")) {
+                        downloadCSV(
+                            "skipped-records.csv",
+                            result.skippedRecords.map((item) => ({
+                                ...item.row,
+                                reason: item.reason,
+                            }))
+                        );
+                    }
+                }}
             >
+                <FileSpreadsheet className="mr-2 h-4 w-4 text-red-500" />
+                Skipped CSV
+            </Button>
 
+            <Button
+                variant="outline"
+                className="hover:bg-neutral-100"
+                onClick={() => {
+                    if (confirm("Export JSON summary?")) {
+                        downloadJSON(
+                            "summary.json",
+                            result
+                        );
+                    }
+                }}
+            >
+                <FileJson className="mr-2 h-4 w-4" />
+                Export JSON
+            </Button>
+
+            <Button
+                className="bg-black text-white hover:bg-neutral-800"
+                onClick={() => {
+                    if (confirm("Print this report?")) {
+                        window.print();
+                    }
+                }}
+            >
                 <Download className="mr-2 h-4 w-4" />
-
-                Download Report
-
+                Print Report
             </Button>
 
         </div>
-
     );
-
 }

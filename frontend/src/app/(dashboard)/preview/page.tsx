@@ -4,6 +4,7 @@ import PreviewHeader from "@/components/preview/PreviewHeader";
 import MetricsGrid from "@/components/preview/MetricGrid";
 import PreviewTable from "@/components/preview/PreviewTable";
 import PreviewActions from "@/components/preview/PreviewActions";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { usePreview } from "@/hooks/usePreview";
 import { useUploadStore } from "@/store/upload.store";
@@ -25,7 +26,16 @@ export default function PreviewPage() {
 
     if (isLoading) {
         return (
-            <p>Loading preview...</p>
+            <div className="space-y-8">
+                <Skeleton className="h-20 w-full rounded-xl" />
+                <div className="grid gap-6 md:grid-cols-4">
+                    <Skeleton className="h-28 rounded-xl" />
+                    <Skeleton className="h-28 rounded-xl" />
+                    <Skeleton className="h-28 rounded-xl" />
+                    <Skeleton className="h-28 rounded-xl" />
+                </div>
+                <Skeleton className="h-[400px] w-full rounded-xl" />
+            </div>
         );
     }
 

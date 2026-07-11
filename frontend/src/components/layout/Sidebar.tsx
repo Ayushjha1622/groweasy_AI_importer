@@ -10,6 +10,7 @@ import {
   LoaderCircle,
   BarChart3,
   History,
+  LayoutDashboard,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -21,6 +22,12 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex flex-1 flex-col gap-2 p-4">
+
+        <NavItem
+          href="/dashboard"
+          label="Dashboard"
+          icon={LayoutDashboard}
+        />
 
         <NavItem
           href="/upload"

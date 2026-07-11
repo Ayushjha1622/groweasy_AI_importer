@@ -17,14 +17,10 @@ export default function SkippedTable({
 
         return (
 
-            <div className="rounded-xl border p-6">
+            <div className="rounded-xl border p-10 text-center">
 
-                <h2 className="text-xl font-semibold">
-                    Skipped Records
-                </h2>
-
-                <p className="mt-4 text-green-600">
-                    No skipped records 🎉
+                <p className="text-green-600 font-medium">
+                    🎉 No skipped records.
                 </p>
 
             </div>
@@ -45,16 +41,16 @@ export default function SkippedTable({
 
             </div>
 
-            <div className="space-y-3 p-5">
+            <div className="space-y-3 p-5 overflow-x-auto">
 
                 {rows.map((record, index) => (
 
                     <div
                         key={index}
-                        className="rounded-lg border p-4"
+                        className="rounded-lg border p-4 min-w-[500px]"
                     >
 
-                        <p className="font-medium text-red-600">
+                        <p className="font-medium text-red-600 whitespace-nowrap">
 
                             {record.reason}
 

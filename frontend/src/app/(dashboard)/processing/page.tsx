@@ -10,6 +10,7 @@ import ProcessingHeader from "@/components/processing/ProcessingHeader";
 import ProgressCard from "@/components/processing/ProgressCard";
 import ProcessingLogs from "@/components/processing/ProcessingLogs";
 import { useImportStore } from "@/store/import.store";
+import { toast } from "sonner";
 
 export default function ProcessingPage() {
   const router = useRouter();
@@ -67,6 +68,7 @@ useEffect(() => {
         
         setTimeout(() => {
             console.log("SUCCESS", data);
+            toast.success("Import Completed Successfully");
             setResult(data);
             router.push("/results");
         }, 800);

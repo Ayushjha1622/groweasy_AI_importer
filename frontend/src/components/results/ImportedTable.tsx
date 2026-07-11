@@ -9,7 +9,11 @@ export default function ImportedTable({
 }: Props) {
 
     if (rows.length === 0) {
-        return null;
+        return (
+            <div className="rounded-xl border p-10 text-center text-muted-foreground">
+                No imported records.
+            </div>
+        );
     }
 
     const columns = Object.keys(rows[0]);
@@ -26,7 +30,7 @@ export default function ImportedTable({
 
             </div>
 
-            <div className="max-h-[500px] overflow-auto">
+            <div className="max-h-[500px] overflow-x-auto">
 
                 <table className="w-full">
 
@@ -39,7 +43,7 @@ export default function ImportedTable({
 
                                 <th
                                     key={column}
-                                    className="px-4 py-3 text-left text-sm font-medium"
+                                    className="px-4 py-3 text-left text-sm font-medium whitespace-nowrap"
                                 >
                                     {column}
                                 </th>
@@ -64,7 +68,7 @@ export default function ImportedTable({
 
                                     <td
                                         key={column}
-                                        className="px-4 py-3 text-sm"
+                                        className="px-4 py-3 text-sm whitespace-nowrap"
                                     >
                                         {String(row[column] ?? "")}
                                     </td>

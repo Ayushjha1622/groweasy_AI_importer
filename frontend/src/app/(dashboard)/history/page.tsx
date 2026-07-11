@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { toast } from "sonner";
 
 import { useHistory } from "@/hooks/useHistory";
 
@@ -8,6 +9,7 @@ import HistoryHeader from "@/components/history/HistoryHeader";
 import HistoryTable from "@/components/history/HistoryTable";
 import SearchBox from "@/components/history/SearchBox";
 import SortSelect from "@/components/history/SortSelect";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function HistoryPage() {
 
@@ -15,6 +17,12 @@ export default function HistoryPage() {
         data = [],
         isLoading,
     } = useHistory();
+
+    useEffect(() => {
+        if (!isLoading && data.length > 0) {
+            toast.success("History Loaded");
+        }
+    }, [isLoading, data.length]);
 
     const [search, setSearch] = useState("");
 
@@ -47,9 +55,12 @@ export default function HistoryPage() {
     }, [data, search, sort]);
 
     if (isLoading) {
-
-        return <p>Loading history...</p>;
-
+        return (
+            <div className="space-y-8">
+                <Skeleton className="h-12 w-1/3 rounded-xl" />
+                <Skeleton className="h-[500px] w-full rounded-xl" />
+            </div>
+        );
     }
 
     return (

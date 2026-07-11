@@ -6,9 +6,12 @@ import previewRoutes from "./preview.routes";
 import healthRoutes from "./health.routes";
 import mappingRoutes from "./mapping.routes";
 import historyRoutes from "./history.routes";
+import dashboardRoutes from "./dashboard.routes";
 
 
 const router = Router();
+
+router.use("/dashboard", dashboardRoutes);
 
 router.use("/health", healthRoutes);
 

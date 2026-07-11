@@ -1,6 +1,7 @@
 "use client";
 
 import { HistoryItem } from "@/services/history.service";
+import { Badge } from "@/components/ui/badge";
 
 interface Props {
 
@@ -86,17 +87,19 @@ export default function HistoryTable({
                             </td>
 
                             <td className="px-4 py-3">
-                                <span
-                                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                                        row.successRate === 100
-                                            ? "bg-green-100 text-green-700"
-                                            : row.successRate >= 70
-                                            ? "bg-yellow-100 text-yellow-700"
-                                            : "bg-red-100 text-red-700"
-                                    }`}
-                                >
-                                    {row.successRate}%
-                                </span>
+                                {row.successRate === 100 ? (
+                                    <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+                                        🟢 {row.successRate}% Excellent
+                                    </Badge>
+                                ) : row.successRate >= 70 ? (
+                                    <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">
+                                        🟡 {row.successRate}% Good
+                                    </Badge>
+                                ) : (
+                                    <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
+                                        🔴 {row.successRate}% Poor
+                                    </Badge>
+                                )}
                             </td>
 
                             <td className="px-4 py-3">
