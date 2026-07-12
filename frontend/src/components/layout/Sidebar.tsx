@@ -63,42 +63,42 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           />
 
           <NavItem
-            href="/dashboard/upload"
+            href="/upload"
             label="Upload"
             icon={Upload}
             onNavigate={onClose}
           />
 
           <NavItem
-            href="/dashboard/preview"
+            href="/preview"
             label="Preview"
             icon={Table}
             onNavigate={onClose}
           />
 
           <NavItem
-            href="/dashboard/mapping"
+            href="/mapping"
             label="AI Mapping"
             icon={BrainCircuit}
             onNavigate={onClose}
           />
 
           <NavItem
-            href="/dashboard/processing"
+            href="/processing"
             label="Processing"
             icon={LoaderCircle}
             onNavigate={onClose}
           />
 
           <NavItem
-            href="/dashboard/results"
+            href="/results"
             label="Results"
             icon={BarChart3}
             onNavigate={onClose}
           />
 
           <NavItem
-            href="/dashboard/history"
+            href="/history"
             label="History"
             icon={History}
             onNavigate={onClose}

@@ -36,7 +36,7 @@ useEffect(() => {
 
     if (!fileId) {
         console.log("No fileId");
-        router.replace("/dashboard/upload");
+        router.replace("/upload");
         return;
     }
 
@@ -72,7 +72,7 @@ useEffect(() => {
             console.log("SUCCESS", data);
             toast.success("Import Completed Successfully");
             setResult(data);
-            router.push("/dashboard/results");
+            router.push("/results");
         }, 800);
     }).catch((error) => {
         clearInterval(progressInterval);
@@ -105,7 +105,7 @@ useEffect(() => {
       {isError && (
         <div className="flex justify-center mt-6">
           <Button 
-            onClick={() => router.push("/dashboard/upload")} 
+            onClick={() => router.push("/upload")} 
             variant="destructive"
             size="lg"
           >
