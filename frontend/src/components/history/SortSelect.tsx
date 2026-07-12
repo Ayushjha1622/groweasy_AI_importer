@@ -20,7 +20,11 @@ export default function SortSelect({
     return (
         <Select
             value={value}
-            onValueChange={onChange}
+            onValueChange={(val) => {
+                if (val !== null && val !== undefined) {
+                    onChange(val);
+                }
+            }}
         >
             <SelectTrigger className="w-52">
                 <SelectValue />
