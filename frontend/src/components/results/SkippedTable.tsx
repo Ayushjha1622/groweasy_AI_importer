@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function SkippedTable({
-    rows,
+    rows = [],
 }: Props) {
 
     if (rows.length === 0) {

@@ -1,49 +1,31 @@
 import fs from "fs";
-
-import csv from "csv-parser";
-
+import { parse } from "@fast-csv/parse";
 import { normalizeHeader } from "./headerNormalizer";
-
 import { detectDelimiter } from "./delimiterDetector";
 
 export async function parseCSV(
-
     filePath: string
-
 ): Promise<Record<string, string>[]> {
 
     const rows: Record<string, string>[] = [];
-
-    const separator = detectDelimiter(filePath);
+    const delimiter = detectDelimiter(filePath);
 
     return new Promise((resolve, reject) => {
-
         fs.createReadStream(filePath)
-
-            .pipe(csv({
-
-                separator,
-
-                mapHeaders: ({ header }) =>
-
-                    normalizeHeader(header)
-
-            }))
-
-            .on("data", (row) => {
-
+            .pipe(
+                parse({
+                    headers: (headers) => headers.map(h => h ? normalizeHeader(h) : ""),
+                    delimiter,
+                    ignoreEmpty: true,
+                    trim: true,
+                })
+            )
+            .on("error", reject)
+            .on("data", (row: Record<string, string>) => {
                 rows.push(row);
-
             })
-
             .on("end", () => {
-
                 resolve(rows);
-
-            })
-
-            .on("error", reject);
-
+            });
     });
-
 }

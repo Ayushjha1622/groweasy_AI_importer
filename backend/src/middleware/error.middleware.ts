@@ -10,7 +10,9 @@ export function errorHandler(
     next: NextFunction
 ) {
 
-    logger.error(err);
+    console.error("========== ERROR ==========");
+    console.error(err);
+    console.error(err.stack);
 
     if (err instanceof AppError) {
         return res.status(err.statusCode).json({
@@ -21,6 +23,6 @@ export function errorHandler(
 
     return res.status(500).json({
         success: false,
-        message: "Internal Server Error"
+        message: err.message
     });
 }

@@ -23,75 +23,76 @@ class MistralService {
 
     private normalizeRecord(record: any) {
 
-    return {
+        return {
 
-        created_at: record.created_at ?? "",
+            created_at: record.created_at ?? "",
 
-        name: record.name ?? "",
+            name: record.name ?? "",
 
-        email: record.email ?? "",
+            email: record.email ?? "",
 
-        country_code: record.country_code ?? "",
+            country_code: record.country_code ?? "",
 
-        mobile_without_country_code:
-            record.mobile_without_country_code ?? "",
+            mobile_without_country_code:
+                record.mobile_without_country_code ?? "",
 
-        company: record.company ?? "",
+            company: record.company ?? "",
 
-        city: record.city ?? "",
+            city: record.city ?? "",
 
-        state: record.state ?? "",
+            state: record.state ?? "",
 
-        country: record.country ?? "",
+            country: record.country ?? "",
 
-        lead_owner: record.lead_owner ?? "",
+            lead_owner: record.lead_owner ?? "",
 
-        crm_note: record.crm_note ?? "",
+            crm_note: record.crm_note ?? "",
 
-        possession_time: record.possession_time ?? "",
+            possession_time: record.possession_time ?? "",
 
-        description: record.description ?? "",
+            description: record.description ?? "",
 
-       crm_status: [
-    "GOOD_LEAD_FOLLOW_UP",
-    "DID_NOT_CONNECT",
-    "BAD_LEAD",
-    "SALE_DONE"
-].includes(record.crm_status)
-    ? record.crm_status
-    : "",
+            crm_status: [
+                "GOOD_LEAD_FOLLOW_UP",
+                "DID_NOT_CONNECT",
+                "BAD_LEAD",
+                "SALE_DONE"
+            ].includes(record.crm_status)
+                ? record.crm_status
+                : "",
 
-data_source: [
-    "leads_on_demand",
-    "meridian_tower",
-    "eden_park",
-    "varah_swamy",
-    "sarjapur_plots"
-].includes(record.data_source)
-    ? record.data_source
-    : "",
+            data_source: [
+                "leads_on_demand",
+                "meridian_tower",
+                "eden_park",
+                "varah_swamy",
+                "sarjapur_plots"
+            ].includes(record.data_source)
+                ? record.data_source
+                : "",
 
-    };
+        };
 
-}
+    }
 
-private normalizeHeaderMapping(mapping: any): ColumnMapping {
+    private normalizeHeaderMapping(mapping: any): ColumnMapping {
 
-    return {
+        return {
 
-        csvColumn: mapping.csvColumn ?? "",
+            csvColumn: mapping.csvColumn ?? "",
 
-        mappedField: mapping.mappedField ?? "",
+            mappedField: mapping.mappedField ?? "",
 
-        confidence: Number(mapping.confidence ?? 0),
+            confidence: Number(mapping.confidence ?? 0),
 
-        required: false,
+            required: false,
 
-    };
+        };
 
-}
+    }
 
     async extract(records: unknown[]) {
+        console.log("AI records:", records.length);
         return retry(async () => {
             const prompt = buildPrompt(records);
 
@@ -101,6 +102,7 @@ private normalizeHeaderMapping(mapping: any): ColumnMapping {
 
             const response = await client.chat.complete({
                 model: env.MISTRAL_MODEL,
+
                 temperature: 0,
                 messages: [
                     {
@@ -109,7 +111,6 @@ private normalizeHeaderMapping(mapping: any): ColumnMapping {
                     },
                 ],
             });
-
             const content = response.choices?.[0]?.message?.content;
 
             if (!content) {
@@ -121,47 +122,53 @@ private normalizeHeaderMapping(mapping: any): ColumnMapping {
                     ? this.cleanResponse(content)
                     : this.cleanResponse(content.toString());
 
-                    logger.info("========== RAW MISTRAL RESPONSE ==========");
-                    logger.info(cleaned);
-                    logger.info("=========================================");
+            logger.info("========== RAW MISTRAL RESPONSE ==========");
+            logger.info(cleaned);
+            logger.info("=========================================");
 
 
             let parsed: unknown;
 
-try {
-   const json = extractJsonArray(cleaned);
+            try {
+                const json = extractJsonArray(cleaned);
 
-parsed = JSON.parse(json);
-} catch (error) {
-    logger.error(error);
-    throw new Error("Invalid JSON returned by Mistral.");
-}
+                parsed = JSON.parse(json);
+            } catch (error) {
+                logger.error(error);
+                throw new Error("Invalid JSON returned by Mistral.");
+            }
 
-if (!Array.isArray(parsed)) {
-    throw new Error("Expected Mistral to return a JSON array.");
-}
+            if (!Array.isArray(parsed)) {
+                throw new Error("Expected Mistral to return a JSON array.");
+            }
 
-const normalized = parsed.map((record) =>
-    this.normalizeRecord(record)
-);
+            const normalized = parsed.map((record) =>
+                this.normalizeRecord(record)
+            );
 
-const validated = crmArraySchema.parse(normalized);
+            const validated = crmArraySchema.parse(normalized);
 
-logger.info(
-    `Successfully extracted ${validated.length} CRM records`
-);
+            if (validated.length !== records.length) {
+                logger.warn(
+                    `Expected ${records.length} records, got ${validated.length}`
+                );
+            }
 
-return validated;
+            logger.info(
+                `Successfully extracted ${validated.length} CRM records`
+            );
+
+            return validated;
         });
     }
 
     async mapHeaders(
-    headers: string[]
-): Promise<ColumnMapping[]> {
+        headers: string[]
+    ): Promise<ColumnMapping[]> {
 
-    return retry(async () => {
+        return retry(async () => {
 
-        const prompt = `
+            const prompt = `
 You are an expert CRM field mapper.
 
 Map every CSV header to the best CRM field.
@@ -201,75 +208,75 @@ Return format:
 ]
 `;
 
-        logger.info(
-            `Sending ${headers.length} headers to Mistral`
-        );
+            logger.info(
+                `Sending ${headers.length} headers to Mistral`
+            );
 
-        const response = await client.chat.complete({
+            const response = await client.chat.complete({
 
-            model: env.MISTRAL_MODEL,
+                model: env.MISTRAL_MODEL,
 
-            temperature: 0,
+                temperature: 0,
 
-            messages: [
-                {
-                    role: "user",
-                    content: prompt,
-                },
-            ],
+                messages: [
+                    {
+                        role: "user",
+                        content: prompt,
+                    },
+                ],
+
+            });
+
+            const content =
+                response.choices?.[0]?.message?.content;
+
+            if (!content) {
+                throw new Error(
+                    "Empty response from Mistral."
+                );
+            }
+
+            const cleaned =
+                typeof content === "string"
+                    ? this.cleanResponse(content)
+                    : this.cleanResponse(
+                        content.toString()
+                    );
+
+            logger.info("===== AI HEADER MAPPING =====");
+            logger.info(cleaned);
+
+            let parsed: unknown;
+
+            try {
+
+                parsed = JSON.parse(
+                    extractJsonArray(cleaned)
+                );
+
+            } catch {
+
+                throw new Error(
+                    "Invalid JSON returned by Mistral."
+                );
+
+            }
+
+            if (!Array.isArray(parsed)) {
+
+                throw new Error(
+                    "Expected JSON array."
+                );
+
+            }
+
+            return parsed.map(mapping =>
+                this.normalizeHeaderMapping(mapping)
+            );
 
         });
 
-        const content =
-            response.choices?.[0]?.message?.content;
-
-        if (!content) {
-            throw new Error(
-                "Empty response from Mistral."
-            );
-        }
-
-        const cleaned =
-            typeof content === "string"
-                ? this.cleanResponse(content)
-                : this.cleanResponse(
-                    content.toString()
-                );
-
-        logger.info("===== AI HEADER MAPPING =====");
-        logger.info(cleaned);
-
-        let parsed: unknown;
-
-        try {
-
-            parsed = JSON.parse(
-                extractJsonArray(cleaned)
-            );
-
-        } catch {
-
-            throw new Error(
-                "Invalid JSON returned by Mistral."
-            );
-
-        }
-
-        if (!Array.isArray(parsed)) {
-
-            throw new Error(
-                "Expected JSON array."
-            );
-
-        }
-
-        return parsed.map(mapping =>
-            this.normalizeHeaderMapping(mapping)
-        );
-
-    });
-
-}
+    }
 }
 
 export const mistralService = new MistralService();

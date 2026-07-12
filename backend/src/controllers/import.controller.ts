@@ -16,17 +16,21 @@ export const processImport =
 
             const { fileId } = req.body;
 
+            console.log("Controller started");
+
             const result =
                 await importService.process(
                     fileId
                 );
 
-           res.status(200).json(
-    successResponse(
-        result,
-        "Import completed."
-    )
-);
+            console.log("Controller finished");
+
+            res.status(200).json(
+                successResponse(
+                    result,
+                    "Import completed."
+                )
+            );
 
         }
 

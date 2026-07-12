@@ -35,7 +35,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       <aside
         className={[
           // Base styles
-          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r bg-card transition-transform duration-300 ease-in-out",
+          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col glass-panel !border-y-0 !border-l-0 !border-r-white/5 transition-transform duration-300 ease-in-out",
           // Mobile: slide in/out
           "lg:static lg:translate-x-0 lg:z-auto",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",

@@ -1,5 +1,5 @@
 import fs from "fs";
-import csv from "csv-parser";
+import { parse } from "@fast-csv/parse";
 
 export async function streamCSV(
     filePath: string
@@ -10,21 +10,13 @@ export async function streamCSV(
         const rows: Record<string, unknown>[] = [];
 
         fs.createReadStream(filePath)
-
-            .pipe(csv())
-
-            .on("data", (row) => {
-
+            .pipe(parse({ headers: true, ignoreEmpty: true, trim: true }))
+            .on("data", (row: Record<string, any>) => {
                 rows.push(row);
-
             })
-
             .on("end", () => {
-
                 resolve(rows);
-
             })
-
             .on("error", reject);
 
     });

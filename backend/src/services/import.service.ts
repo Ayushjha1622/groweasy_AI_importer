@@ -13,6 +13,7 @@ import { historyService } from "./history.service";
 
 class ImportService {
     async process(fileId: string) {
+        console.log("Import Service Started");
 
         const filePath = path.join(
             process.cwd(),
@@ -31,9 +32,11 @@ class ImportService {
 
         console.timeEnd("CSV Streaming");
 
-        const batches = createBatches(rows, 100);
+        console.log("Rows:", rows.length);
 
-        const imported: any[] = [];
+        const batches = createBatches(rows, 50);
+
+        let importedCount = 0;
         const skipped: any[] = [];
 
         for (const batch of batches) {
@@ -62,6 +65,9 @@ class ImportService {
                 aiRecords = await mistralService.extract(
                     aiCandidates
                 );
+
+                // Cooldown between batches to avoid rate-limiting
+                await new Promise(resolve => setTimeout(resolve, 2000));
             }
 
             let aiIndex = 0;
@@ -71,11 +77,12 @@ class ImportService {
                 try {
 
                     if (needsAI(record)) {
-                        imported.push(
-                            aiRecords[aiIndex++]
-                        );
+                        const aiRecord = aiRecords[aiIndex++];
+                        if (aiRecord) {
+                            importedCount++;
+                        }
                     } else {
-                        imported.push(record);
+                        importedCount++;
                     }
 
                 } catch (error) {
@@ -98,24 +105,22 @@ class ImportService {
             rows.length === 0
                 ? 0
                 : Math.round(
-                    (imported.length / rows.length) * 100
+                    (importedCount / rows.length) * 100
                 );
 
         console.log("Saving history...");
         historyService.save(
             fileId,
             rows.length,
-            imported.length,
+            importedCount,
             skipped.length
         );
 
         const summary = {
             total: rows.length,
-            imported: imported.length,
+            imported: importedCount,
             skipped: skipped.length,
             successRate,
-            importedRecords: imported,
-            skippedRecords: skipped,
         };
 
         return summary;

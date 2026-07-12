@@ -27,11 +27,11 @@ export default function NavItem({
       href={href}
       onClick={onNavigate}
       className={clsx(
-        "flex items-center gap-3 rounded-xl px-4 py-3 transition-all",
+        "flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-300",
 
         active
-          ? "bg-primary text-primary-foreground"
-          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+          ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(168,85,247,0.15)]"
+          : "text-muted-foreground border border-transparent hover:bg-white/5 hover:text-foreground"
       )}
     >
       <Icon size={18} />

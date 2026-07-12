@@ -10,7 +10,7 @@ interface NavbarProps {
 
 export default function Navbar({ onMenuClick }: NavbarProps) {
   return (
-    <header className="sticky top-0 z-50 flex h-20 items-center justify-between border-b bg-background/70 px-4 md:px-8 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 flex h-20 items-center justify-between glass-panel !border-x-0 !border-t-0 !border-b-white/5 bg-background/60 px-4 md:px-8">
       <div className="flex items-center gap-4">
         <Button
           variant="ghost"
@@ -28,8 +28,8 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             className="absolute left-3 top-3 text-muted-foreground"
           />
           <Input
-            placeholder="Search..."
-            className="w-48 md:w-80 pl-9"
+            placeholder="Search across intelligence..."
+            className="w-48 md:w-[400px] pl-10 bg-white/5 border-transparent focus-visible:ring-primary/50 rounded-full"
           />
         </div>
       </div>

@@ -5,7 +5,7 @@ interface Props {
 }
 
 export default function ImportedTable({
-    rows,
+    rows = [],
 }: Props) {
 
     if (rows.length === 0) {

@@ -15,6 +15,7 @@ import {
     downloadJSON,
 } from "@/lib/export";
 import { generatePDFReport } from "@/lib/pdfExport";
+import { toast } from "sonner";
 
 export default function ResultsActions() {
     const result = useImportStore((state) => state.result);
@@ -24,26 +25,15 @@ export default function ResultsActions() {
     return (
         <div className="flex flex-wrap gap-4">
 
-            <Button
-                variant="outline"
-                className="hover:bg-neutral-100"
-                onClick={() => {
-                    if (confirm("Export imported records?")) {
-                        downloadCSV(
-                            "imported-records.csv",
-                            result.importedRecords
-                        );
-                    }
-                }}
-            >
-                <FileSpreadsheet className="mr-2 h-4 w-4" />
-                Export CSV
-            </Button>
 
             <Button
                 variant="outline"
                 className="hover:bg-neutral-100"
                 onClick={() => {
+                    if (!result.skippedRecords?.length) {
+                        toast.error("No skipped records to export.");
+                        return;
+                    }
                     if (confirm("Export skipped records?")) {
                         downloadCSV(
                             "skipped-records.csv",

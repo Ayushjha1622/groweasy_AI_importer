@@ -1,0 +1,1 @@
+{"version":3,"file":"aiMapper.js","sourceRoot":"","sources":["../../../src/services/mapping/aiMapper.ts"],"names":[],"mappings":";;AAGA,4BAUC;AAbD,2DAAuD;AAGhD,KAAK,UAAU,QAAQ,CAC1B,OAAiB;IAGjB,IAAI,OAAO,CAAC,MAAM,KAAK,CAAC,EAAE,CAAC;QACvB,OAAO,EAAE,CAAC;IACd,CAAC;IAED,OAAO,MAAM,gCAAc,CAAC,UAAU,CAAC,OAAO,CAAC,CAAC;AAEpD,CAAC"}

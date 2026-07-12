@@ -10,6 +10,7 @@ ensureUploadDirectory();
 
 const storage = multer.diskStorage({
     destination(req, file, cb) {
+        ensureUploadDirectory();
         cb(null, uploadDirectory);
     },
 

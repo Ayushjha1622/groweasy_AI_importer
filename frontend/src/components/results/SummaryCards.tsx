@@ -26,33 +26,25 @@ export default function SummaryCards({
             title: "Total Records",
             value: summary.total,
             icon: Database,
-            textColor: "text-blue-600 dark:text-blue-400",
-            iconColor: "text-blue-600 dark:text-blue-400",
-            bg: "bg-blue-50 dark:bg-blue-950/30",
+            iconColor: "text-primary drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]",
         },
         {
             title: "Imported",
             value: summary.imported,
             icon: CheckCircle2,
-            textColor: "text-emerald-600 dark:text-emerald-400",
-            iconColor: "text-emerald-600 dark:text-emerald-400",
-            bg: "bg-emerald-50 dark:bg-emerald-950/30",
+            iconColor: "text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]",
         },
         {
             title: "Skipped",
             value: summary.skipped,
             icon: XCircle,
-            textColor: "text-rose-600 dark:text-rose-400",
-            iconColor: "text-rose-600 dark:text-rose-400",
-            bg: "bg-rose-50 dark:bg-rose-950/30",
+            iconColor: "text-rose-500 drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]",
         },
         {
             title: "Success Rate",
             value: `${summary.successRate}%`,
             icon: TrendingUp,
-            textColor: "text-violet-600 dark:text-violet-400",
-            iconColor: "text-violet-600 dark:text-violet-400",
-            bg: "bg-violet-50 dark:bg-violet-950/30",
+            iconColor: "text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]",
         },
     ];
 
@@ -64,24 +56,23 @@ export default function SummaryCards({
                 return (
                     <div
                         key={card.title}
-                        className="rounded-xl border bg-card p-6 shadow-sm flex items-center justify-between"
+                        className="glass-panel p-6 flex flex-col justify-between rounded-xl relative overflow-hidden group hover:shadow-[0_0_30px_rgba(168,85,247,0.1)] transition-all duration-500"
                     >
-                        <div>
+                        <div className="flex items-center justify-between">
                             <p className="text-sm font-medium text-muted-foreground">
                                 {card.title}
                             </p>
+                            <Icon size={20} className={card.iconColor} />
+                        </div>
 
-                            <h2 className={`mt-2 text-3xl font-bold tracking-tight ${card.textColor}`}>
+                        <div className="mt-4">
+                            <h2 className="text-4xl font-bold tracking-tight text-foreground">
                                 {card.value}
                             </h2>
                         </div>
-
-                        <div className={`rounded-full p-3 ${card.bg}`}>
-                            <Icon
-                                size={22}
-                                className={card.iconColor}
-                            />
-                        </div>
+                        
+                        {/* Subtle gradient glow inside card */}
+                        <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>
                 );
             })}

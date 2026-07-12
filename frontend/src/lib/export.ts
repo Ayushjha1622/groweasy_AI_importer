@@ -4,7 +4,7 @@ export function downloadCSV(
     filename: string,
     rows: Record<string, unknown>[]
 ) {
-    if (!rows.length) return;
+    if (!rows?.length) return;
 
     const headers = Object.keys(rows[0]);
 
@@ -46,6 +46,8 @@ export function downloadJSON(
     filename: string,
     data: unknown
 ) {
+    if (!data) return;
+
     const blob = new Blob(
         [
             JSON.stringify(
@@ -73,6 +75,6 @@ export function downloadJSON(
     document.body.removeChild(link);
 
     URL.revokeObjectURL(url);
-    
+
     toast.success("JSON Downloaded");
 }
