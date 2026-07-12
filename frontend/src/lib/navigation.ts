@@ -7,7 +7,7 @@ import {
   History,
 } from "lucide-react";
 
-import { NavigationItem } from "@/types/navigation";
+import { NavigationItem } from "@/types/navigation"
 
 export const navigation: NavigationItem[] = [
   {
