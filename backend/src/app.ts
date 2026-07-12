@@ -14,7 +14,8 @@ app.use(
       if (!origin) return callback(null, true);
       if (
         origin === "http://localhost:3000" ||
-        origin.endsWith(".vercel.app")
+        origin.endsWith(".vercel.app") ||
+        origin.includes(".vercel.app")
       ) {
         return callback(null, true);
       }
