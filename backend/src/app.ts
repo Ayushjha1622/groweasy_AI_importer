@@ -13,7 +13,7 @@ app.use(
         origin: [
             "http://localhost:3000",
             "http://localhost:5000",
-            "https://groweasy-ai-importer.vercel.app",
+            "https://groweasy-ai-importer-dl1s.onrender.com"
         ],
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
