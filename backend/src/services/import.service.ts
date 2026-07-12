@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import { parseCSV } from "./csv/csvParser.service";
+import { streamCSV } from "./csv/csvStream.service";
 
 import { mapRow } from "./mapping/ruleMapper";
 import { needsAI } from "./mapping/needAI";
@@ -25,7 +25,11 @@ class ImportService {
             throw new Error("Uploaded file not found.");
         }
 
-        const rows = await parseCSV(filePath);
+        console.time("CSV Streaming");
+
+        const rows = await streamCSV(filePath);
+
+        console.timeEnd("CSV Streaming");
 
         const batches = createBatches(rows, 100);
 
@@ -94,27 +98,27 @@ class ImportService {
             rows.length === 0
                 ? 0
                 : Math.round(
-                      (imported.length / rows.length) * 100
-                  );
+                    (imported.length / rows.length) * 100
+                );
 
         console.log("Saving history...");
-historyService.save(
-    fileId,
-    rows.length,
-    imported.length,
-    skipped.length
-);
+        historyService.save(
+            fileId,
+            rows.length,
+            imported.length,
+            skipped.length
+        );
 
-const summary = {
-    total: rows.length,
-    imported: imported.length,
-    skipped: skipped.length,
-    successRate,
-    importedRecords: imported,
-    skippedRecords: skipped,
-};
+        const summary = {
+            total: rows.length,
+            imported: imported.length,
+            skipped: skipped.length,
+            successRate,
+            importedRecords: imported,
+            skippedRecords: skipped,
+        };
 
-return summary;
+        return summary;
     }
 }
 

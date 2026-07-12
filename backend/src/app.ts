@@ -5,6 +5,7 @@ import routes from "./routes";
 
 import { notFound } from "./middleware/notFound.middleware";
 import { errorHandler } from "./middleware/error.middleware";
+import testRoutes from "./routes/test.routes";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({
 }));
 
 app.use("/api", routes);
+app.use("/api/test", testRoutes);
 
 // 404
 app.use(notFound);
