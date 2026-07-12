@@ -64,7 +64,7 @@ export default function DashboardPage() {
                 <div className="rounded-xl border py-20 text-center flex flex-col items-center justify-center">
                     <h2 className="text-2xl font-semibold mb-2">No imports yet.</h2>
                     <p className="text-muted-foreground mb-6">Upload your first CSV.</p>
-                    <Link href="/upload">
+                    <Link href="/dashboard/upload">
                         <Button className="bg-black text-white hover:bg-neutral-800">
                             Go to Upload
                         </Button>

@@ -14,7 +14,7 @@ export default function PreviewActions() {
             <Button
                 size="lg"
                 onClick={() =>
-                    router.push("/mapping")
+                    router.push("/dashboard/mapping")
                 }
             >
                 Continue to AI Mapping →

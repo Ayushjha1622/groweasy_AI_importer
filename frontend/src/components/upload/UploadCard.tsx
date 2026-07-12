@@ -44,7 +44,7 @@ export default function UploadCard() {
 
       toast.success("CSV uploaded successfully!");
 
-      router.push("/preview");
+      router.push("/dashboard/preview");
     } catch (error) {
       console.error(error);
 

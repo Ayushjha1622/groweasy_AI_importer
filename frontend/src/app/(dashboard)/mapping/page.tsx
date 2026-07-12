@@ -44,7 +44,7 @@ export default function MappingPage() {
     console.log("Before:", window.location.pathname);
     console.log("Mapping fileId:", fileId);
 
-    router.push("/processing");
+    router.push("/dashboard/processing");
 
     setTimeout(() => {
       console.log("After:", window.location.pathname);
